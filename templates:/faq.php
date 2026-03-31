@@ -1,0 +1,54 @@
+<?php
+/**
+ * Template Name: FAQ
+ */
+get_header(); ?>
+
+<div class="main-content">
+    <div class="page-content">
+        <h1>Frequently Asked Questions</h1>
+        
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">Is VidGrab Pro free to use?</div>
+                <div class="faq-answer">Yes, our basic video downloading service is completely free. We offer premium features for power users, but the core functionality remains free.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What video qualities are available?</div>
+                <div class="faq-answer">We support multiple quality options including 480p (SD), 720p (HD), 1080p (Full HD), 2K, and 4K when available from the source platform.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Is it legal to download videos?</div>
+                <div class="faq-answer">VidGrab Pro is a tool for personal use. Please respect copyright laws and only download videos that you have permission to use or that are in the public domain.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Do you support mobile devices?</div>
+                <div class="faq-answer">Yes, our website is fully responsive and works perfectly on all devices including smartphones, tablets, and desktop computers.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Why is my download not working?</div>
+                <div class="faq-answer">This could be due to several reasons: unsupported platform, video privacy settings, or temporary server issues. Try again later or contact support.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I download entire playlists?</div>
+                <div class="faq-answer">Currently, we support individual video downloads. Playlist downloading is a feature we're developing for future updates.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How long does it take to download a video?</div>
+                <div class="faq-answer">Download speed depends on your internet connection and video size. Most videos download in under a minute with a standard broadband connection.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Do you store any of my data?</div>
+                <div class="faq-answer">We respect your privacy. We don't store downloaded videos or personal information. Video URLs are processed in real-time and not saved.</div>
+            </div>
+        </div>
+        
+        <div class="adsense-ad">
+            <ins class
