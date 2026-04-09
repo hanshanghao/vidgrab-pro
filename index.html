@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransFormX — Universal File Converter & Link Downloader</title>
+<meta name="description" content="Convert any file format, download from any platform. The world's most powerful media conversion suite.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   CSS VARIABLES — LIGHT / DARK AUTO-DETECT
+═══════════════════════════════════════════════════════════ */
+:root {
+  --accent: #00E5FF;
+  --accent2: #FF3CAC;
+  --accent3: #FFB800;
+  --accent4: #00FF94;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 40px;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --transition: 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 0.16s ease;
+  --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #080A0F;
+    --bg2: #0F1219;
+    --bg3: #161B26;
+    --bg4: #1E2535;
+    --bg5: #252D40;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #F0F4FF;
+    --text2: #A8B4CC;
+    --text3: #6B7A99;
+    --glow: rgba(0,229,255,0.15);
+    --glow2: rgba(255,60,172,0.12);
+    --card-bg: rgba(15,18,25,0.8);
+    --card-border: rgba(255,255,255,0.06);
+    --hero-gradient: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,229,255,0.18) 0%, transparent 70%),
+                     radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,60,172,0.12) 0%, transparent 60%),
+                     radial-gradient(ellipse 40% 60% at 10% 60%, rgba(0,255,148,0.08) 0%, transparent 50%);
+    --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #F5F7FC;
+    --bg2: #ECEEF5;
+    --bg3: #FFFFFF;
+    --bg4: #F0F2F9;
+    --bg5: #E5E8F2;
+    --border: rgba(0,0,0,0.07);
+    --border2: rgba(0,0,0,0.12);
+    --text: #0D1224;
+    --text2: #3D4A6B;
+    --text3: #7A88AA;
+    --glow: rgba(0,180,220,0.12);
+    --glow2: rgba(220,40,150,0.08);
+    --card-bg: rgba(255,255,255,0.9);
+    --card-border: rgba(0,0,0,0.06);
+    --hero-gradient: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,180,220,0.15) 0%, transparent 70%),
+                     radial-gradient(ellipse 60% 40% at 80% 80%, rgba(220,40,150,0.1) 0%, transparent 60%),
+                     radial-gradient(ellipse 40% 60% at 10% 60%, rgba(0,200,120,0.07) 0%, transparent 50%);
+    --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  }
+}
+
+/* ═══ RESET & BASE ═══ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg5); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ═══ NOISE OVERLAY ═══ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--noise);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 clamp(16px, 4vw, 48px);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(var(--bg-rgb, 8,10,15), 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition-smooth);
+}
+
+@media (prefers-color-scheme: light) {
+  .nav { background: rgba(245,247,252,0.85); }
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.nav-logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 0 20px rgba(0,229,255,0.4);
+}
+
+.nav-logo span { color: var(--accent); }
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text2);
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+.nav-link:hover { color: var(--text); background: var(--bg3); }
+.nav-link.active { color: var(--accent); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Language Selector */
+.lang-select {
+  position: relative;
+}
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: var(--transition-fast);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  min-width: 140px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: var(--transition-smooth);
+  z-index: 999;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.lang-select:hover .lang-dropdown,
+.lang-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.lang-option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text2);
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lang-option:hover { background: var(--bg4); color: var(--text); }
+.lang-option.selected { color: var(--accent); }
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg3);
+}
+.mobile-menu-btn span {
+  display: block;
+  width: 20px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: var(--transition-fast);
+}
+
+@media (max-width: 768px) {
+  .nav-center { display: none; }
+  .mobile-menu-btn { display: flex; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px clamp(16px, 5vw, 80px) 60px;
+  background: var(--hero-gradient);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated grid */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 80% 70% at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at center, black 30%, transparent 80%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orb-float 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.orb-1 { width: 400px; height: 400px; background: rgba(0,229,255,0.12); top: -100px; left: -100px; animation-delay: 0s; }
+.orb-2 { width: 500px; height: 500px; background: rgba(255,60,172,0.09); bottom: -150px; right: -100px; animation-delay: -3s; }
+.orb-3 { width: 300px; height: 300px; background: rgba(0,255,148,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -6s; }
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+}
+.orb-3 {
+  animation: orb-float3 8s ease-in-out infinite;
+}
+@keyframes orb-float3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-50%, calc(-50% + 20px)) scale(1.05); }
+  66% { transform: translate(-50%, calc(-50% - 15px)) scale(0.95); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 99px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 28px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  animation: fade-up 0.6s ease both;
+}
+
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent4);
+  box-shadow: 0 0 8px var(--accent4);
+  animation: pulse-dot 2s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+  animation: fade-up 0.6s 0.1s ease both;
+}
+
+.hero-title .line2 {
+  display: block;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 100%;
+  animation: fade-up 0.6s 0.1s ease both, gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text2);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+  font-weight: 300;
+  animation: fade-up 0.6s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fade-up 0.6s 0.3s ease both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #0088ff);
+  color: #000;
+  box-shadow: 0 0 30px rgba(0,229,255,0.3), 0 4px 12px rgba(0,0,0,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 50px rgba(0,229,255,0.5), 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.btn-ghost {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: clamp(24px, 4vw, 60px);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 60px;
+  animation: fade-up 0.6s 0.4s ease both;
+}
+
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num span { color: var(--accent); }
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Divider */
+.stat-divider {
+  width: 1px;
+  background: var(--border2);
+  align-self: stretch;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION WRAPPER
+═══════════════════════════════════════════════════════════ */
+.section {
+  padding: clamp(60px, 8vw, 100px) clamp(16px, 5vw, 80px);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--text2);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOOL CATEGORIES — MAIN GRID
+═══════════════════════════════════════════════════════════ */
+#tools {
+  background: var(--bg);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.tool-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--card-accent-color, rgba(0,229,255,0.05)), transparent);
+  opacity: 0;
+  transition: var(--transition-smooth);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-accent-color, rgba(0,229,255,0.3));
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px var(--card-accent-color, rgba(0,229,255,0.1));
+}
+
+.tool-card:hover::before { opacity: 1; }
+
+.tool-card-header {
+  padding: 28px 28px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tool-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0.15;
+  filter: blur(12px);
+  transform: scale(1.5);
+  z-index: -1;
+}
+
+.tool-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.badge-free { background: rgba(0,255,148,0.15); color: var(--accent4); }
+.badge-hot { background: rgba(255,184,0,0.15); color: var(--accent3); }
+.badge-new { background: rgba(0,229,255,0.15); color: var(--accent); }
+
+.tool-card-body { padding: 0 28px 28px; }
+
+.tool-card-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.tool-card-desc {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.tool-formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.format-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.tool-card:hover .format-tag {
+  border-color: var(--border2);
+  color: var(--text2);
+}
+
+.tool-cta {
+  width: 100%;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid var(--border2);
+  background: var(--bg4);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.tool-cta:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN CONVERTER / DOWNLOADER PANEL
+═══════════════════════════════════════════════════════════ */
+#converter {
+  background: var(--bg2);
+}
+
+.converter-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Tab nav */
+.converter-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.converter-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text3);
+  transition: var(--transition-fast);
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.converter-tab.active {
+  background: var(--bg4);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+
+.converter-tab:hover:not(.active) { color: var(--text2); }
+
+/* Panel */
+.converter-panel {
+  display: none;
+  animation: fade-up 0.3s ease both;
+}
+.converter-panel.active { display: block; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  background: var(--bg3);
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(255,60,172,0.03));
+  opacity: 0;
+  transition: var(--transition-smooth);
+}
+
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--accent);
+  background: var(--bg4);
+  box-shadow: 0 0 40px rgba(0,229,255,0.1);
+}
+
+.drop-zone:hover::before, .drop-zone.dragover::before {
+  opacity: 1;
+}
+
+.drop-icon {
+  width: 72px; height: 72px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--bg4), var(--bg5));
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  transition: var(--transition);
+}
+
+.drop-zone:hover .drop-icon {
+  transform: scale(1.1) rotate(-5deg);
+  border-color: var(--accent);
+}
+
+.drop-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.drop-sub {
+  font-size: 0.875rem;
+  color: var(--text3);
+  margin-bottom: 20px;
+}
+
+.drop-accept {
+  font-size: 0.78rem;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+input[type="file"] { display: none; }
+
+/* Format selector */
+.format-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.format-select {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  width: 100%;
+}
+
+.format-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+}
+
+.format-arrow {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+
+/* URL input */
+.url-input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.url-input {
+  width: 100%;
+  padding: 14px 52px 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  transition: var(--transition-fast);
+}
+
+.url-input::placeholder { color: var(--text3); font-family: var(--font-body); }
+
+.url-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+}
+
+.url-input-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.platform-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.platform-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.platform-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0,229,255,0.05);
+}
+
+.platform-chip.selected {
+  background: rgba(0,229,255,0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Progress */
+.progress-bar-wrap {
+  height: 4px;
+  background: var(--bg4);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 16px 0;
+  display: none;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 99px;
+  width: 0%;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 12px var(--accent);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PLATFORM SECTION — LINK DOWNLOADER
+═══════════════════════════════════════════════════════════ */
+#downloader { background: var(--bg); }
+
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto 48px;
+}
+
+.platform-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.platform-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--platform-color, var(--accent));
+  transform: scaleX(0);
+  transition: var(--transition-smooth);
+}
+
+.platform-card:hover {
+  border-color: var(--platform-color, var(--accent));
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.platform-card:hover::after { transform: scaleX(1); }
+
+.platform-logo {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.platform-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.platform-sub {
+  font-size: 0.72rem;
+  color: var(--text3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════════════════════════ */
+#features { background: var(--bg2); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-item {
+  padding: 28px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+
+.feature-item:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.feature-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.feature-desc {
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════════════════════ */
+#how { background: var(--bg); }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 36px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), var(--accent), var(--border2), transparent);
+}
+
+.step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-num {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 2px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 auto 20px;
+  transition: var(--transition);
+  position: relative;
+}
+
+.step:hover .step-num {
+  border-color: var(--accent);
+  background: rgba(0,229,255,0.05);
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(0,229,255,0.2);
+}
+
+.step-emoji {
+  position: absolute;
+  top: -4px; right: -4px;
+  font-size: 18px;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.step-desc {
+  font-size: 0.85rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FAQ
+═══════════════════════════════════════════════════════════ */
+#faq { background: var(--bg2); }
+
+.faq-list {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: var(--transition-fast);
+}
+
+.faq-item:hover { border-color: var(--border2); }
+
+.faq-q {
+  padding: 18px 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  user-select: none;
+}
+
+.faq-q-icon {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--text3);
+  transition: var(--transition-smooth);
+}
+
+.faq-item.open .faq-q-icon { transform: rotate(45deg); background: rgba(0,229,255,0.1); color: var(--accent); }
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 0 22px;
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.faq-item.open .faq-a {
+  max-height: 200px;
+  padding-bottom: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 48px clamp(16px, 5vw, 80px);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.footer-brand p {
+  font-size: 0.875rem;
+  color: var(--text3);
+  line-height: 1.7;
+  margin-top: 12px;
+  max-width: 280px;
+}
+
+.footer-col-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: 0.02em;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--text3);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.footer-link:hover { color: var(--accent); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-bottom p {
+  font-size: 0.8rem;
+  color: var(--text3);
+}
+
+.footer-bottom p span { color: var(--accent2); }
+
+.footer-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.social-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text3);
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+.social-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 900px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .footer-inner { grid-template-columns: 1fr; }
+  .steps-grid::before { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  animation: toast-in 0.3s ease both;
+  max-width: 320px;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.toast-icon { font-size: 18px; }
+.toast.success { border-color: rgba(0,255,148,0.3); }
+.toast.success .toast-icon::before { content: '✅'; }
+.toast.error { border-color: rgba(255,80,80,0.3); }
+.toast.error .toast-icon::before { content: '❌'; }
+.toast.info { border-color: rgba(0,229,255,0.3); }
+.toast.info .toast-icon::before { content: 'ℹ️'; }
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition-smooth);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  max-width: 560px;
+  width: 100%;
+  transform: scale(0.95) translateY(20px);
+  transition: var(--transition);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.modal-close:hover { background: var(--bg5); color: var(--text); }
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+}
+
+.modal-sub {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-bottom: 28px;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-option {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-align: center;
+}
+
+.modal-option:hover {
+  border-color: var(--accent);
+  background: rgba(0,229,255,0.05);
+}
+
+.modal-option-icon { font-size: 24px; margin-bottom: 6px; }
+.modal-option-label { font-size: 0.8rem; font-weight: 600; color: var(--text2); }
+
+/* ═══ SCROLL REVEAL ═══ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══ MOBILE NAV DRAWER ═══ */
+.mobile-nav {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px;
+  z-index: 999;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  transform: translateY(-100%);
+  transition: var(--transition-smooth);
+}
+
+.mobile-nav.open {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .mobile-nav { display: flex; }
+}
+
+/* ═══ LOADING STATE ═══ */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══ FILE LIST ═══ */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  animation: fade-up 0.3s ease both;
+}
+
+.file-icon { font-size: 20px; }
+.file-info { flex: 1; min-width: 0; }
+.file-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-size { font-size: 0.75rem; color: var(--text3); font-family: var(--font-mono); }
+
+.file-remove {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+.file-remove:hover { background: rgba(255,80,80,0.2); color: #ff5050; }
+
+/* ═══ SECTION BG ALTERNATE ═══ */
+.bg-alt { background: var(--bg2); }
+
+/* ═══ QUALITY BADGE ═══ */
+.quality-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.quality-opt {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text3);
+  transition: var(--transition-fast);
+}
+.quality-opt:hover, .quality-opt.selected {
+  background: rgba(0,229,255,0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ═══ CTA SECTION ═══ */
+.cta-section {
+  background: var(--bg);
+  padding: 80px clamp(16px, 5vw, 80px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(0,229,255,0.08), transparent 70%);
+}
+
+.cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.cta-desc {
+  font-size: 1rem;
+  color: var(--text2);
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NOISE OVERLAY + ORBS ═══════════════ -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    TransForm<span>X</span>
+  </div>
+
+  <div class="nav-center">
+    <span class="nav-link" onclick="scrollTo('tools')" data-i18n="nav_tools">Tools</span>
+    <span class="nav-link" onclick="scrollTo('converter')" data-i18n="nav_converter">Converter</span>
+    <span class="nav-link" onclick="scrollTo('downloader')" data-i18n="nav_downloader">Downloader</span>
+    <span class="nav-link" onclick="scrollTo('features')" data-i18n="nav_features">Features</span>
+    <span class="nav-link" onclick="scrollTo('faq')" data-i18n="nav_faq">FAQ</span>
+  </div>
+
+  <div class="nav-right">
+    <div class="lang-select">
+      <button class="lang-btn" id="langBtn">
+        <span id="currentLangFlag">🇺🇸</span>
+        <span id="currentLangName">EN</span>
+        ▾
+      </button>
+      <div class="lang-dropdown" id="langDropdown">
+        <div class="lang-option selected" onclick="setLang('en')">🇺🇸 English</div>
+        <div class="lang-option" onclick="setLang('ru')">🇷🇺 Русский</div>
+        <div class="lang-option" onclick="setLang('zh')">🇹🇼 繁體中文</div>
+      </div>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileNav()" id="mobileMenuBtn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <span class="nav-link" onclick="scrollTo('tools');toggleMobileNav()" data-i18n="nav_tools">Tools</span>
+  <span class="nav-link" onclick="scrollTo('converter');toggleMobileNav()" data-i18n="nav_converter">Converter</span>
+  <span class="nav-link" onclick="scrollTo('downloader');toggleMobileNav()" data-i18n="nav_downloader">Downloader</span>
+  <span class="nav-link" onclick="scrollTo('features');toggleMobileNav()" data-i18n="nav_features">Features</span>
+  <span class="nav-link" onclick="scrollTo('faq');toggleMobileNav()" data-i18n="nav_faq">FAQ</span>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      <span data-i18n="hero_badge">v3.0 — 300+ formats supported</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span data-i18n="hero_title1">Convert Anything.</span><br>
+      <span class="line2" data-i18n="hero_title2">Download Everything.</span>
+    </h1>
+
+    <p class="hero-sub" data-i18n="hero_sub">
+      The world's most powerful file conversion suite. Convert documents, media, images, and audio — plus download from 1000+ platforms instantly.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="scrollTo('converter')">
+        <span>⚡</span>
+        <span data-i18n="hero_cta1">Start Converting</span>
+      </button>
+      <button class="btn btn-ghost" onclick="scrollTo('downloader')">
+        <span>⬇</span>
+        <span data-i18n="hero_cta2">Download Links</span>
+      </button>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num">300<span>+</span></div>
+        <div class="stat-label" data-i18n="stat1">Formats</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">1000<span>+</span></div>
+        <div class="stat-label" data-i18n="stat2">Platforms</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">50<span>M+</span></div>
+        <div class="stat-label" data-i18n="stat3">Files Processed</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">100<span>%</span></div>
+        <div class="stat-label" data-i18n="stat4">Free to Use</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TOOL CATEGORIES ═══════════════ -->
+<section class="section" id="tools">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// TOOL SUITE</div>
+    <h2 class="section-title" data-i18n="tools_title">Every Tool You'll Ever Need</h2>
+    <p class="section-desc" data-i18n="tools_desc">Professional-grade converters for every file type. No software required.</p>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- PDF Tools -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(255,60,172,0.3)" onclick="openTool('pdf')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(255,60,172,0.2), rgba(255,60,172,0.05));">📄</div>
+        <span class="tool-badge badge-hot" data-i18n="badge_hot">HOT</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_pdf_title">PDF Converter</div>
+        <div class="tool-card-desc" data-i18n="tool_pdf_desc">Convert to & from PDF. Merge, split, compress, and protect your PDFs with ease.</div>
+        <div class="tool-formats">
+          <span class="format-tag">PDF</span><span class="format-tag">DOCX</span><span class="format-tag">XLSX</span><span class="format-tag">PPTX</span><span class="format-tag">JPG</span><span class="format-tag">PNG</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Microsoft Office -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(0,120,215,0.3)" onclick="openTool('office')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(0,120,215,0.2), rgba(0,120,215,0.05));">📊</div>
+        <span class="tool-badge badge-new" data-i18n="badge_new">NEW</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_office_title">Microsoft Office</div>
+        <div class="tool-card-desc" data-i18n="tool_office_desc">Convert Word, Excel, PowerPoint files to PDF, HTML, ODF, and more.</div>
+        <div class="tool-formats">
+          <span class="format-tag">DOCX</span><span class="format-tag">XLSX</span><span class="format-tag">PPTX</span><span class="format-tag">ODT</span><span class="format-tag">ODS</span><span class="format-tag">PDF</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Image Converter -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(0,255,148,0.3)" onclick="openTool('image')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(0,255,148,0.2), rgba(0,255,148,0.05));">🖼️</div>
+        <span class="tool-badge badge-free" data-i18n="badge_free">FREE</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_image_title">Image Converter</div>
+        <div class="tool-card-desc" data-i18n="tool_image_desc">Resize, compress, and convert images between all popular formats instantly.</div>
+        <div class="tool-formats">
+          <span class="format-tag">JPG</span><span class="format-tag">PNG</span><span class="format-tag">WEBP</span><span class="format-tag">SVG</span><span class="format-tag">AVIF</span><span class="format-tag">HEIC</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Video Converter -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(255,184,0,0.3)" onclick="openTool('video')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(255,184,0,0.2), rgba(255,184,0,0.05));">🎬</div>
+        <span class="tool-badge badge-hot" data-i18n="badge_hot">HOT</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_video_title">Video Converter</div>
+        <div class="tool-card-desc" data-i18n="tool_video_desc">Convert videos to MP4, MKV, AVI, WebM. Extract audio, trim clips, and more.</div>
+        <div class="tool-formats">
+          <span class="format-tag">MP4</span><span class="format-tag">MKV</span><span class="format-tag">AVI</span><span class="format-tag">MOV</span><span class="format-tag">WEBM</span><span class="format-tag">FLV</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Audio Converter -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(180,100,255,0.3)" onclick="openTool('audio')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(180,100,255,0.2), rgba(180,100,255,0.05));">🎵</div>
+        <span class="tool-badge badge-free" data-i18n="badge_free">FREE</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_audio_title">Audio Converter</div>
+        <div class="tool-card-desc" data-i18n="tool_audio_desc">Convert audio files, change bitrate, strip metadata. Supports all audio codecs.</div>
+        <div class="tool-formats">
+          <span class="format-tag">MP3</span><span class="format-tag">FLAC</span><span class="format-tag">WAV</span><span class="format-tag">AAC</span><span class="format-tag">OGG</span><span class="format-tag">M4A</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Link Downloader -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(0,229,255,0.3)" onclick="scrollTo('downloader')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,229,255,0.05));">⬇️</div>
+        <span class="tool-badge badge-new" data-i18n="badge_new">NEW</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_dl_title">Link Downloader</div>
+        <div class="tool-card-desc" data-i18n="tool_dl_desc">Download from YouTube, TikTok, Instagram, Twitter, and 1000+ other platforms.</div>
+        <div class="tool-formats">
+          <span class="format-tag">YouTube</span><span class="format-tag">TikTok</span><span class="format-tag">IG</span><span class="format-tag">Twitter</span><span class="format-tag">Twitch</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- eBook -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(255,120,50,0.3)" onclick="openTool('ebook')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(255,120,50,0.2), rgba(255,120,50,0.05));">📚</div>
+        <span class="tool-badge badge-free" data-i18n="badge_free">FREE</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_ebook_title">eBook Converter</div>
+        <div class="tool-card-desc" data-i18n="tool_ebook_desc">Convert between all eBook formats. EPUB to Kindle, PDF to EPUB, and more.</div>
+        <div class="tool-formats">
+          <span class="format-tag">EPUB</span><span class="format-tag">MOBI</span><span class="format-tag">AZW3</span><span class="format-tag">PDF</span><span class="format-tag">FB2</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+    <!-- Archive -->
+    <div class="tool-card reveal" style="--card-accent-color: rgba(50,200,100,0.3)" onclick="openTool('archive')">
+      <div class="tool-card-header">
+        <div class="tool-icon" style="background: linear-gradient(135deg, rgba(50,200,100,0.2), rgba(50,200,100,0.05));">🗜️</div>
+        <span class="tool-badge badge-hot" data-i18n="badge_hot">HOT</span>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title" data-i18n="tool_archive_title">Archive Tool</div>
+        <div class="tool-card-desc" data-i18n="tool_archive_desc">Create, extract, and convert archives. ZIP, RAR, 7Z with optional encryption.</div>
+        <div class="tool-formats">
+          <span class="format-tag">ZIP</span><span class="format-tag">RAR</span><span class="format-tag">7Z</span><span class="format-tag">TAR</span><span class="format-tag">GZ</span>
+        </div>
+        <button class="tool-cta"><span data-i18n="btn_open">Open Tool</span> →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ CONVERTER PANEL ═══════════════ -->
+<section class="section bg-alt" id="converter">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// CONVERTER</div>
+    <h2 class="section-title" data-i18n="conv_title">Universal File Converter</h2>
+    <p class="section-desc" data-i18n="conv_desc">Drag & drop any file, select your output format, and download in seconds.</p>
+  </div>
+
+  <div class="converter-wrapper">
+    <div class="converter-tabs">
+      <div class="converter-tab active" onclick="switchTab('doc')" id="tab-doc">📄 <span data-i18n="tab_doc">Documents</span></div>
+      <div class="converter-tab" onclick="switchTab('img')" id="tab-img">🖼️ <span data-i18n="tab_img">Images</span></div>
+      <div class="converter-tab" onclick="switchTab('vid')" id="tab-vid">🎬 <span data-i18n="tab_vid">Video</span></div>
+      <div class="converter-tab" onclick="switchTab('aud')" id="tab-aud">🎵 <span data-i18n="tab_aud">Audio</span></div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="converter-panel active" id="panel-doc">
+      <div class="drop-zone" id="dropDoc" onclick="document.getElementById('fileDoc').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'doc')" ondragleave="handleDragLeave(event)">
+        <input type="file" id="fileDoc" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.rtf,.csv,.html,.epub" multiple onchange="handleFiles(this,'doc')">
+        <div class="drop-icon">📄</div>
+        <div class="drop-title" data-i18n="drop_title">Drop your documents here</div>
+        <div class="drop-sub" data-i18n="drop_sub">or click to browse from your device</div>
+        <div class="drop-accept">PDF · DOCX · XLSX · PPTX · ODT · RTF · TXT · CSV · HTML · EPUB</div>
+      </div>
+      <div class="file-list" id="fileListDoc"></div>
+      <div class="format-row" id="fmtRowDoc" style="display:none">
+        <select class="format-select" id="fromDoc">
+          <option value="">From: Auto-detect</option>
+          <option>PDF</option><option>DOCX</option><option>XLSX</option><option>PPTX</option><option>ODT</option><option>TXT</option><option>RTF</option><option>HTML</option><option>EPUB</option>
+        </select>
+        <div class="format-arrow">→</div>
+        <select class="format-select" id="toDoc">
+          <option value="">To: Select format</option>
+          <option>PDF</option><option>DOCX</option><option>XLSX</option><option>PPTX</option><option>ODT</option><option>TXT</option><option>RTF</option><option>HTML</option><option>EPUB</option><option>PNG</option><option>JPG</option>
+        </select>
+      </div>
+      <div class="progress-bar-wrap" id="progDoc"><div class="progress-bar-fill" id="progDocFill"></div></div>
+      <button class="btn btn-primary" id="btnConvDoc" style="width:100%;display:none;justify-content:center" onclick="startConvert('doc')">
+        ⚡ <span data-i18n="btn_convert">Convert Now</span>
+      </button>
+    </div>
+
+    <!-- IMAGES -->
+    <div class="converter-panel" id="panel-img">
+      <div class="drop-zone" id="dropImg" onclick="document.getElementById('fileImg').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'img')" ondragleave="handleDragLeave(event)">
+        <input type="file" id="fileImg" accept="image/*" multiple onchange="handleFiles(this,'img')">
+        <div class="drop-icon">🖼️</div>
+        <div class="drop-title" data-i18n="drop_title_img">Drop your images here</div>
+        <div class="drop-sub" data-i18n="drop_sub">or click to browse from your device</div>
+        <div class="drop-accept">JPG · PNG · WEBP · GIF · SVG · HEIC · AVIF · BMP · TIFF · ICO</div>
+      </div>
+      <div class="file-list" id="fileListImg"></div>
+      <div class="format-row" id="fmtRowImg" style="display:none">
+        <select class="format-select" id="fromImg">
+          <option value="">From: Auto-detect</option>
+          <option>JPG</option><option>PNG</option><option>WEBP</option><option>GIF</option><option>SVG</option><option>HEIC</option><option>AVIF</option><option>BMP</option>
+        </select>
+        <div class="format-arrow">→</div>
+        <select class="format-select" id="toImg">
+          <option value="">To: Select format</option>
+          <option>JPG</option><option>PNG</option><option>WEBP</option><option>GIF</option><option>SVG</option><option>AVIF</option><option>BMP</option><option>ICO</option><option>PDF</option>
+        </select>
+      </div>
+      <div id="qualityRow" style="display:none; margin: 12px 0;">
+        <div style="font-size:0.8rem; color: var(--text3); margin-bottom:8px; font-family: var(--font-mono);" data-i18n="quality_label">OUTPUT QUALITY</div>
+        <div class="quality-grid">
+          <div class="quality-opt" onclick="selectQuality(this)">Low</div>
+          <div class="quality-opt selected" onclick="selectQuality(this)">Medium</div>
+          <div class="quality-opt" onclick="selectQuality(this)">High</div>
+          <div class="quality-opt" onclick="selectQuality(this)">Max</div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap" id="progImg"><div class="progress-bar-fill" id="progImgFill"></div></div>
+      <button class="btn btn-primary" id="btnConvImg" style="width:100%;display:none;justify-content:center" onclick="startConvert('img')">
+        ⚡ <span data-i18n="btn_convert">Convert Now</span>
+      </button>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="converter-panel" id="panel-vid">
+      <div class="drop-zone" id="dropVid" onclick="document.getElementById('fileVid').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'vid')" ondragleave="handleDragLeave(event)">
+        <input type="file" id="fileVid" accept="video/*" multiple onchange="handleFiles(this,'vid')">
+        <div class="drop-icon">🎬</div>
+        <div class="drop-title" data-i18n="drop_title_vid">Drop your videos here</div>
+        <div class="drop-sub" data-i18n="drop_sub">or click to browse from your device</div>
+        <div class="drop-accept">MP4 · MKV · AVI · MOV · WEBM · FLV · WMV · M4V · 3GP · TS</div>
+      </div>
+      <div class="file-list" id="fileListVid"></div>
+      <div class="format-row" id="fmtRowVid" style="display:none">
+        <select class="format-select" id="fromVid">
+          <option value="">From: Auto-detect</option>
+          <option>MP4</option><option>MKV</option><option>AVI</option><option>MOV</option><option>WEBM</option><option>FLV</option>
+        </select>
+        <div class="format-arrow">→</div>
+        <select class="format-select" id="toVid">
+          <option value="">To: Select format</option>
+          <option>MP4</option><option>MKV</option><option>AVI</option><option>MOV</option><option>WEBM</option><option>FLV</option><option>MP3</option><option>AAC</option><option>GIF</option>
+        </select>
+      </div>
+      <div class="progress-bar-wrap" id="progVid"><div class="progress-bar-fill" id="progVidFill"></div></div>
+      <button class="btn btn-primary" id="btnConvVid" style="width:100%;display:none;justify-content:center" onclick="startConvert('vid')">
+        ⚡ <span data-i18n="btn_convert">Convert Now</span>
+      </button>
+    </div>
+
+    <!-- AUDIO -->
+    <div class="converter-panel" id="panel-aud">
+      <div class="drop-zone" id="dropAud" onclick="document.getElementById('fileAud').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'aud')" ondragleave="handleDragLeave(event)">
+        <input type="file" id="fileAud" accept="audio/*" multiple onchange="handleFiles(this,'aud')">
+        <div class="drop-icon">🎵</div>
+        <div class="drop-title" data-i18n="drop_title_aud">Drop your audio files here</div>
+        <div class="drop-sub" data-i18n="drop_sub">or click to browse from your device</div>
+        <div class="drop-accept">MP3 · FLAC · WAV · AAC · OGG · M4A · AIFF · WMA · OPUS</div>
+      </div>
+      <div class="file-list" id="fileListAud"></div>
+      <div class="format-row" id="fmtRowAud" style="display:none">
+        <select class="format-select" id="fromAud">
+          <option value="">From: Auto-detect</option>
+          <option>MP3</option><option>FLAC</option><option>WAV</option><option>AAC</option><option>OGG</option><option>M4A</option>
+        </select>
+        <div class="format-arrow">→</div>
+        <select class="format-select" id="toAud">
+          <option value="">To: Select format</option>
+          <option>MP3</option><option>FLAC</option><option>WAV</option><option>AAC</option><option>OGG</option><option>M4A</option><option>AIFF</option><option>OPUS</option>
+        </select>
+      </div>
+      <div class="progress-bar-wrap" id="progAud"><div class="progress-bar-fill" id="progAudFill"></div></div>
+      <button class="btn btn-primary" id="btnConvAud" style="width:100%;display:none;justify-content:center" onclick="startConvert('aud')">
+        ⚡ <span data-i18n="btn_convert">Convert Now</span>
+      </button>
+    </div>
+
+  </div><!-- end converter-wrapper -->
+</section>
+
+<!-- ═══════════════ LINK DOWNLOADER ═══════════════ -->
+<section class="section" id="downloader">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// DOWNLOADER</div>
+    <h2 class="section-title" data-i18n="dl_title">Download From Any Platform</h2>
+    <p class="section-desc" data-i18n="dl_desc">Paste a link from any of the platforms below and download your content instantly.</p>
+  </div>
+
+  <!-- Platform chips -->
+  <div class="platforms-grid reveal">
+    <div class="platform-card" style="--platform-color: #FF0000" onclick="selectPlatform('YouTube')">
+      <div class="platform-logo">▶️</div>
+      <div class="platform-name">YouTube</div>
+      <div class="platform-sub">Video & Audio</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #010101" onclick="selectPlatform('TikTok')">
+      <div class="platform-logo">🎵</div>
+      <div class="platform-name">TikTok</div>
+      <div class="platform-sub">Short videos</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #E1306C" onclick="selectPlatform('Instagram')">
+      <div class="platform-logo">📸</div>
+      <div class="platform-name">Instagram</div>
+      <div class="platform-sub">Photos & Reels</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #1DA1F2" onclick="selectPlatform('Twitter')">
+      <div class="platform-logo">🐦</div>
+      <div class="platform-name">Twitter / X</div>
+      <div class="platform-sub">Videos & GIFs</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #6441A5" onclick="selectPlatform('Twitch')">
+      <div class="platform-logo">🎮</div>
+      <div class="platform-name">Twitch</div>
+      <div class="platform-sub">Clips & VODs</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #FF0000" onclick="selectPlatform('Vimeo')">
+      <div class="platform-logo">🎞️</div>
+      <div class="platform-name">Vimeo</div>
+      <div class="platform-sub">HD Videos</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #25D366" onclick="selectPlatform('WhatsApp')">
+      <div class="platform-logo">💬</div>
+      <div class="platform-name">WhatsApp</div>
+      <div class="platform-sub">Media status</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #0088CC" onclick="selectPlatform('Telegram')">
+      <div class="platform-logo">✈️</div>
+      <div class="platform-name">Telegram</div>
+      <div class="platform-sub">Files & media</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #FF4500" onclick="selectPlatform('Reddit')">
+      <div class="platform-logo">👽</div>
+      <div class="platform-name">Reddit</div>
+      <div class="platform-sub">Videos & GIFs</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #BD081C" onclick="selectPlatform('Pinterest')">
+      <div class="platform-logo">📌</div>
+      <div class="platform-name">Pinterest</div>
+      <div class="platform-sub">Images & videos</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #0E76A8" onclick="selectPlatform('LinkedIn')">
+      <div class="platform-logo">💼</div>
+      <div class="platform-name">LinkedIn</div>
+      <div class="platform-sub">Videos & docs</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #1877F2" onclick="selectPlatform('Facebook')">
+      <div class="platform-logo">👥</div>
+      <div class="platform-name">Facebook</div>
+      <div class="platform-sub">Videos & reels</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #FF5A5F" onclick="selectPlatform('Dailymotion')">
+      <div class="platform-logo">🎦</div>
+      <div class="platform-name">Dailymotion</div>
+      <div class="platform-sub">Videos</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #1DB954" onclick="selectPlatform('Spotify')">
+      <div class="platform-logo">🎧</div>
+      <div class="platform-name">Spotify</div>
+      <div class="platform-sub">Audio preview</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #F97316" onclick="selectPlatform('SoundCloud')">
+      <div class="platform-logo">🔊</div>
+      <div class="platform-name">SoundCloud</div>
+      <div class="platform-sub">Audio tracks</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #FF0050" onclick="selectPlatform('Snapchat')">
+      <div class="platform-logo">👻</div>
+      <div class="platform-name">Snapchat</div>
+      <div class="platform-sub">Stories & spots</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #00AFF0" onclick="selectPlatform('Skype')">
+      <div class="platform-logo">📞</div>
+      <div class="platform-name">Skype</div>
+      <div class="platform-sub">Media files</div>
+    </div>
+    <div class="platform-card" style="--platform-color: #00B2FF" onclick="selectPlatform('Other')">
+      <div class="platform-logo">🌐</div>
+      <div class="platform-name" data-i18n="platform_other">1000+ More</div>
+      <div class="platform-sub" data-i18n="platform_other_sub">Any web URL</div>
+    </div>
+  </div>
+
+  <!-- Downloader input -->
+  <div class="converter-wrapper">
+    <div style="background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 32px;">
+      <div style="margin-bottom: 16px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text3);" id="dlPlatformLabel" data-i18n="dl_paste_label">PASTE YOUR LINK</div>
+      <div class="url-input-wrapper">
+        <input type="url" class="url-input" id="urlInput" placeholder="https://youtube.com/watch?v=..." data-i18n-placeholder="dl_placeholder">
+        <span class="url-input-icon">🔗</span>
+      </div>
+
+      <div style="font-size: 0.8rem; color: var(--text3); margin-bottom: 10px;" data-i18n="dl_format_label">Select download format:</div>
+      <div class="platform-chips" id="dlFormatChips">
+        <div class="platform-chip selected" onclick="selectDlFormat(this,'video-mp4')">🎬 MP4 Video</div>
+        <div class="platform-chip" onclick="selectDlFormat(this,'video-mkv')">📦 MKV Video</div>
+        <div class="platform-chip" onclick="selectDlFormat(this,'audio-mp3')">🎵 MP3 Audio</div>
+        <div class="platform-chip" onclick="selectDlFormat(this,'audio-flac')">💿 FLAC Audio</div>
+        <div class="platform-chip" onclick="selectDlFormat(this,'gif')">🌀 GIF</div>
+        <div class="platform-chip" onclick="selectDlFormat(this,'image')">🖼️ Thumbnail</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <select class="format-select" id="dlQuality">
+          <option value="best">Best Quality</option>
+          <option value="1080p">1080p HD</option>
+          <option value="720p">720p</option>
+          <option value="480p">480p</option>
+          <option value="360p">360p</option>
+          <option value="audio">Audio Only</option>
+        </select>
+        <select class="format-select" id="dlSubtitles">
+          <option value="none">No Subtitles</option>
+          <option value="en">English Subs</option>
+          <option value="ru">Russian Subs</option>
+          <option value="zh">Chinese Subs</option>
+          <option value="auto">Auto-detect</option>
+        </select>
+      </div>
+
+      <div class="progress-bar-wrap" id="progDl"><div class="progress-bar-fill" id="progDlFill"></div></div>
+
+      <button class="btn btn-primary" onclick="startDownload()" style="width:100%; justify-content:center; font-size:1rem; padding: 14px;">
+        ⬇ <span data-i18n="btn_download">Download Now</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section class="section bg-alt" id="features">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// WHY TRANSFORMX</div>
+    <h2 class="section-title" data-i18n="feat_title">Built Different</h2>
+    <p class="section-desc" data-i18n="feat_desc">Every detail crafted for speed, privacy, and reliability.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(0,229,255,0.1);">⚡</div>
+      <div class="feature-title" data-i18n="f1_title">Lightning Fast</div>
+      <div class="feature-desc" data-i18n="f1_desc">Powered by distributed servers across 30+ regions. Most conversions complete in under 10 seconds, no matter your location.</div>
+    </div>
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(0,255,148,0.1);">🔐</div>
+      <div class="feature-title" data-i18n="f2_title">Private & Secure</div>
+      <div class="feature-desc" data-i18n="f2_desc">All files are encrypted in transit and permanently deleted from our servers within 1 hour. Zero logging, zero data retention.</div>
+    </div>
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(255,184,0,0.1);">🆓</div>
+      <div class="feature-title" data-i18n="f3_title">Always Free</div>
+      <div class="feature-desc" data-i18n="f3_desc">Core features are free forever. No hidden paywalls, no forced sign-ups, no watermarks on your converted files.</div>
+    </div>
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(255,60,172,0.1);">📱</div>
+      <div class="feature-title" data-i18n="f4_title">Works Everywhere</div>
+      <div class="feature-desc" data-i18n="f4_desc">Works on any device — desktop, mobile, tablet. No software to install. Supports all modern browsers including Safari and Chrome.</div>
+    </div>
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(180,100,255,0.1);">🔄</div>
+      <div class="feature-title" data-i18n="f5_title">Batch Processing</div>
+      <div class="feature-desc" data-i18n="f5_desc">Convert up to 50 files at once. Save time by processing entire folders and downloading all results as a single ZIP archive.</div>
+    </div>
+    <div class="feature-item reveal">
+      <div class="feature-icon" style="background: rgba(50,200,100,0.1);">🌐</div>
+      <div class="feature-title" data-i18n="f6_title">API Access</div>
+      <div class="feature-desc" data-i18n="f6_desc">Integrate conversions into your own app with our REST API. Full documentation, SDKs for Node.js, Python, PHP available.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<section class="section" id="how">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// HOW IT WORKS</div>
+    <h2 class="section-title" data-i18n="how_title">Three Steps to Done</h2>
+    <p class="section-desc" data-i18n="how_desc">No learning curve. No account required. Just results.</p>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step reveal">
+      <div class="step-num">01<span class="step-emoji">📂</span></div>
+      <div class="step-title" data-i18n="step1_title">Upload or Paste</div>
+      <div class="step-desc" data-i18n="step1_desc">Drop your files onto the converter or paste a URL from any supported platform.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">02<span class="step-emoji">⚙️</span></div>
+      <div class="step-title" data-i18n="step2_title">Choose Output</div>
+      <div class="step-desc" data-i18n="step2_desc">Select your target format and adjust quality, resolution, or codec options.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">03<span class="step-emoji">⬇️</span></div>
+      <div class="step-title" data-i18n="step3_title">Download</div>
+      <div class="step-desc" data-i18n="step3_desc">Your converted file is ready instantly. Download it or share the link — it's yours for 24 hours.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">04<span class="step-emoji">🎉</span></div>
+      <div class="step-title" data-i18n="step4_title">Done!</div>
+      <div class="step-desc" data-i18n="step4_desc">That's it. No sign-up, no email required, no redirects or pop-ups. Just pure conversion magic.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section class="section bg-alt" id="faq">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">// FAQ</div>
+    <h2 class="section-title" data-i18n="faq_title">Common Questions</h2>
+  </div>
+
+  <div class="faq-list reveal">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq1_q">Is TransFormX really free?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq1_a">Yes, completely. All core conversion and download features are free with no file count limits. We offer optional Pro plans for commercial API usage and priority processing, but personal use is always free.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq2_q">What is the maximum file size?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq2_a">Free accounts can convert files up to 2 GB. Pro accounts support files up to 50 GB. For video downloads, there's no practical size limit as files are streamed directly.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq3_q">Are my files kept private?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq3_a">Absolutely. Files are transferred over encrypted HTTPS, processed in isolated containers, and deleted from our servers within 60 minutes. We never read, analyze, or share your file contents.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq4_q">Why is my download URL not working?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq4_a">Some platforms frequently change their APIs to prevent downloading. We update our systems regularly. If a platform isn't working, try again in a few minutes or check our status page. Private/DRM-protected content cannot be downloaded.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq5_q">Can I convert files on my phone?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq5_a">Yes! TransFormX is fully responsive and works on iOS and Android browsers. You can even install it as a PWA from your browser menu for an app-like experience with offline support.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span data-i18n="faq6_q">Do you have an API?</span><div class="faq-q-icon">+</div></div>
+      <div class="faq-a" data-i18n="faq6_a">Yes. Our REST API is available for developers. Sign up for a free API key on the developer portal. Rate limits apply to free keys; Pro keys have no limits.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<div class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="cta-inner reveal">
+    <h2 class="cta-title" data-i18n="cta_title">Start Converting Today</h2>
+    <p class="cta-desc" data-i18n="cta_desc">No sign-up needed. Just drop your file and go.</p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="scrollTo('converter')">⚡ <span data-i18n="hero_cta1">Start Converting</span></button>
+      <button class="btn btn-ghost" onclick="scrollTo('downloader')">⬇ <span data-i18n="hero_cta2">Download Links</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:0">
+        <div class="nav-logo-icon">⚡</div>
+        TransForm<span style="color:var(--accent)">X</span>
+      </div>
+      <p data-i18n="footer_desc">The world's most powerful file conversion and download suite. Free forever.</p>
+    </div>
+    <div>
+      <div class="footer-col-title" data-i18n="footer_tools">Tools</div>
+      <div class="footer-links">
+        <span class="footer-link" onclick="openTool('pdf')">PDF Converter</span>
+        <span class="footer-link" onclick="openTool('office')">Office Converter</span>
+        <span class="footer-link" onclick="openTool('image')">Image Converter</span>
+        <span class="footer-link" onclick="openTool('video')">Video Converter</span>
+        <span class="footer-link" onclick="openTool('audio')">Audio Converter</span>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title" data-i18n="footer_company">Company</div>
+      <div class="footer-links">
+        <span class="footer-link" data-i18n="footer_about">About</span>
+        <span class="footer-link" data-i18n="footer_blog">Blog</span>
+        <span class="footer-link" data-i18n="footer_api">API Docs</span>
+        <span class="footer-link" data-i18n="footer_status">Status</span>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title" data-i18n="footer_legal">Legal</div>
+      <div class="footer-links">
+        <span class="footer-link" data-i18n="footer_privacy">Privacy Policy</span>
+        <span class="footer-link" data-i18n="footer_terms">Terms of Use</span>
+        <span class="footer-link" data-i18n="footer_cookies">Cookie Policy</span>
+        <span class="footer-link" data-i18n="footer_dmca">DMCA</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 TransFormX. Made with <span>♥</span> — <span data-i18n="footer_rights">All rights reserved.</span></p>
+    <div class="footer-socials">
+      <div class="social-btn" title="GitHub">⌨</div>
+      <div class="social-btn" title="Twitter">🐦</div>
+      <div class="social-btn" title="Discord">💬</div>
+      <div class="social-btn" title="Telegram">✈</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ MODAL ═══════════════ -->
+<div class="modal-overlay" id="toolModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modalTitle">PDF Tools</div>
+    <div class="modal-sub" id="modalSub">Select a specific tool to get started:</div>
+    <div class="modal-grid" id="modalGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOAST CONTAINER ═══════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+// ═══════════════════════════════════════════════════════════
+// INTERNATIONALIZATION
+// ═══════════════════════════════════════════════════════════
+const i18n = {
+  en: {
+    nav_tools: 'Tools', nav_converter: 'Converter', nav_downloader: 'Downloader', nav_features: 'Features', nav_faq: 'FAQ',
+    hero_badge: 'v3.0 — 300+ formats supported',
+    hero_title1: 'Convert Anything.', hero_title2: 'Download Everything.',
+    hero_sub: 'The world\'s most powerful file conversion suite. Convert documents, media, images, and audio — plus download from 1000+ platforms instantly.',
+    hero_cta1: 'Start Converting', hero_cta2: 'Download Links',
+    stat1: 'Formats', stat2: 'Platforms', stat3: 'Files Processed', stat4: 'Free to Use',
+    tools_title: 'Every Tool You\'ll Ever Need', tools_desc: 'Professional-grade converters for every file type. No software required.',
+    badge_hot: 'HOT', badge_new: 'NEW', badge_free: 'FREE',
+    tool_pdf_title: 'PDF Converter', tool_pdf_desc: 'Convert to & from PDF. Merge, split, compress, and protect your PDFs with ease.',
+    tool_office_title: 'Microsoft Office', tool_office_desc: 'Convert Word, Excel, PowerPoint files to PDF, HTML, ODF, and more.',
+    tool_image_title: 'Image Converter', tool_image_desc: 'Resize, compress, and convert images between all popular formats instantly.',
+    tool_video_title: 'Video Converter', tool_video_desc: 'Convert videos to MP4, MKV, AVI, WebM. Extract audio, trim clips, and more.',
+    tool_audio_title: 'Audio Converter', tool_audio_desc: 'Convert audio files, change bitrate, strip metadata. Supports all audio codecs.',
+    tool_dl_title: 'Link Downloader', tool_dl_desc: 'Download from YouTube, TikTok, Instagram, Twitter, and 1000+ other platforms.',
+    tool_ebook_title: 'eBook Converter', tool_ebook_desc: 'Convert between all eBook formats. EPUB to Kindle, PDF to EPUB, and more.',
+    tool_archive_title: 'Archive Tool', tool_archive_desc: 'Create, extract, and convert archives. ZIP, RAR, 7Z with optional encryption.',
+    btn_open: 'Open Tool', btn_convert: 'Convert Now', btn_download: 'Download Now',
+    conv_title: 'Universal File Converter', conv_desc: 'Drag & drop any file, select your output format, and download in seconds.',
+    tab_doc: 'Documents', tab_img: 'Images', tab_vid: 'Video', tab_aud: 'Audio',
+    drop_title: 'Drop your documents here', drop_title_img: 'Drop your images here', drop_title_vid: 'Drop your videos here', drop_title_aud: 'Drop your audio files here',
+    drop_sub: 'or click to browse from your device',
+    quality_label: 'OUTPUT QUALITY',
+    dl_title: 'Download From Any Platform', dl_desc: 'Paste a link from any of the platforms below and download your content instantly.',
+    dl_paste_label: 'PASTE YOUR LINK', dl_placeholder: 'https://youtube.com/watch?v=...', dl_format_label: 'Select download format:',
+    platform_other: '1000+ More', platform_other_sub: 'Any web URL',
+    feat_title: 'Built Different', feat_desc: 'Every detail crafted for speed, privacy, and reliability.',
+    f1_title: 'Lightning Fast', f1_desc: 'Powered by distributed servers across 30+ regions. Most conversions complete in under 10 seconds.',
+    f2_title: 'Private & Secure', f2_desc: 'All files are encrypted in transit and permanently deleted from our servers within 1 hour.',
+    f3_title: 'Always Free', f3_desc: 'Core features are free forever. No hidden paywalls, no forced sign-ups, no watermarks.',
+    f4_title: 'Works Everywhere', f4_desc: 'Works on any device — desktop, mobile, tablet. No software to install.',
+    f5_title: 'Batch Processing', f5_desc: 'Convert up to 50 files at once. Download all results as a single ZIP archive.',
+    f6_title: 'API Access', f6_desc: 'Integrate conversions into your own app with our REST API. Full documentation available.',
+    how_title: 'Three Steps to Done', how_desc: 'No learning curve. No account required. Just results.',
+    step1_title: 'Upload or Paste', step1_desc: 'Drop your files onto the converter or paste a URL from any supported platform.',
+    step2_title: 'Choose Output', step2_desc: 'Select your target format and adjust quality, resolution, or codec options.',
+    step3_title: 'Download', step3_desc: 'Your converted file is ready instantly. Download it or share the link.',
+    step4_title: 'Done!', step4_desc: 'No sign-up, no email required, no redirects or pop-ups. Just pure conversion magic.',
+    faq_title: 'Common Questions',
+    faq1_q: 'Is TransFormX really free?', faq1_a: 'Yes, completely. All core conversion and download features are free with no file count limits.',
+    faq2_q: 'What is the maximum file size?', faq2_a: 'Free accounts can convert files up to 2 GB. Pro accounts support files up to 50 GB.',
+    faq3_q: 'Are my files kept private?', faq3_a: 'Files are encrypted, processed in isolated containers, and deleted within 60 minutes.',
+    faq4_q: 'Why is my download URL not working?', faq4_a: 'Some platforms change APIs frequently. We update regularly. Private/DRM content cannot be downloaded.',
+    faq5_q: 'Can I convert files on my phone?', faq5_a: 'Yes! TransFormX is fully responsive and works on iOS and Android browsers.',
+    faq6_q: 'Do you have an API?', faq6_a: 'Yes. Our REST API is available for developers with free and Pro key tiers.',
+    cta_title: 'Start Converting Today', cta_desc: 'No sign-up needed. Just drop your file and go.',
+    footer_desc: 'The world\'s most powerful file conversion and download suite. Free forever.',
+    footer_tools: 'Tools', footer_company: 'Company', footer_legal: 'Legal',
+    footer_about: 'About', footer_blog: 'Blog', footer_api: 'API Docs', footer_status: 'Status',
+    footer_privacy: 'Privacy Policy', footer_terms: 'Terms of Use', footer_cookies: 'Cookie Policy', footer_dmca: 'DMCA',
+    footer_rights: 'All rights reserved.',
+    toast_upload: 'Files ready for conversion!', toast_converting: 'Converting your files...', toast_done: 'Conversion complete! Downloading...', toast_downloading: 'Preparing your download...', toast_url_empty: 'Please enter a URL first.', toast_url_invalid: 'Please enter a valid URL.',
+  },
+  ru: {
+    nav_tools: 'Инструменты', nav_converter: 'Конвертер', nav_downloader: 'Загрузчик', nav_features: 'Функции', nav_faq: 'FAQ',
+    hero_badge: 'v3.0 — Поддержка 300+ форматов',
+    hero_title1: 'Конвертируй всё.', hero_title2: 'Скачивай везде.',
+    hero_sub: 'Самый мощный конвертер файлов в мире. Конвертируйте документы, медиа, изображения и аудио — а также скачивайте с 1000+ платформ.',
+    hero_cta1: 'Начать конвертацию', hero_cta2: 'Скачать ссылку',
+    stat1: 'Форматов', stat2: 'Платформ', stat3: 'Файлов обработано', stat4: 'Бесплатно',
+    tools_title: 'Все нужные инструменты', tools_desc: 'Профессиональные конвертеры для каждого типа файлов. Без установки ПО.',
+    badge_hot: 'ХИТ', badge_new: 'НОВЫЙ', badge_free: 'БЕСПЛАТНО',
+    tool_pdf_title: 'PDF Конвертер', tool_pdf_desc: 'Конвертируйте в PDF и из PDF. Объединяйте, разделяйте и сжимайте файлы.',
+    tool_office_title: 'Microsoft Office', tool_office_desc: 'Конвертируйте Word, Excel, PowerPoint в PDF, HTML, ODF и другие форматы.',
+    tool_image_title: 'Конвертер изображений', tool_image_desc: 'Изменяйте размер, сжимайте и конвертируйте изображения между форматами.',
+    tool_video_title: 'Конвертер видео', tool_video_desc: 'Конвертируйте видео в MP4, MKV, AVI, WebM. Извлекайте аудио и обрезайте клипы.',
+    tool_audio_title: 'Конвертер аудио', tool_audio_desc: 'Конвертируйте аудиофайлы, меняйте битрейт. Поддержка всех кодеков.',
+    tool_dl_title: 'Загрузчик ссылок', tool_dl_desc: 'Скачивайте с YouTube, TikTok, Instagram, Twitter и 1000+ других платформ.',
+    tool_ebook_title: 'Конвертер электронных книг', tool_ebook_desc: 'Конвертируйте между всеми форматами электронных книг.',
+    tool_archive_title: 'Архиватор', tool_archive_desc: 'Создавайте, распаковывайте и конвертируйте архивы ZIP, RAR, 7Z.',
+    btn_open: 'Открыть', btn_convert: 'Конвертировать', btn_download: 'Скачать',
+    conv_title: 'Универсальный конвертер', conv_desc: 'Перетащите файл, выберите формат и скачайте результат за секунды.',
+    tab_doc: 'Документы', tab_img: 'Изображения', tab_vid: 'Видео', tab_aud: 'Аудио',
+    drop_title: 'Перетащите документы сюда', drop_title_img: 'Перетащите изображения сюда', drop_title_vid: 'Перетащите видео сюда', drop_title_aud: 'Перетащите аудиофайлы сюда',
+    drop_sub: 'или нажмите, чтобы выбрать файлы',
+    quality_label: 'КАЧЕСТВО ВЫВОДА',
+    dl_title: 'Скачивайте с любой платформы', dl_desc: 'Вставьте ссылку с любой платформы и скачайте контент мгновенно.',
+    dl_paste_label: 'ВСТАВЬТЕ ССЫЛКУ', dl_placeholder: 'https://youtube.com/watch?v=...', dl_format_label: 'Выберите формат загрузки:',
+    platform_other: '1000+ Другие', platform_other_sub: 'Любой URL',
+    feat_title: 'Создан иначе', feat_desc: 'Каждая деталь разработана для скорости, конфиденциальности и надёжности.',
+    f1_title: 'Молниеносно', f1_desc: 'Серверы в 30+ регионах. Большинство конвертаций завершаются за 10 секунд.',
+    f2_title: 'Приватно и безопасно', f2_desc: 'Файлы зашифрованы и удаляются с серверов в течение 1 часа.',
+    f3_title: 'Всегда бесплатно', f3_desc: 'Основные функции бесплатны навсегда. Без скрытых платежей и водяных знаков.',
+    f4_title: 'Работает везде', f4_desc: 'Работает на любом устройстве — ПК, телефон, планшет. Без установки ПО.',
+    f5_title: 'Пакетная обработка', f5_desc: 'Конвертируйте до 50 файлов одновременно. Скачайте всё в одном ZIP-архиве.',
+    f6_title: 'Доступ к API', f6_desc: 'Интегрируйте конвертацию в своё приложение через REST API. Полная документация.',
+    how_title: 'Три шага — и готово', how_desc: 'Никакой кривой обучения. Аккаунт не нужен. Просто результат.',
+    step1_title: 'Загрузите или вставьте', step1_desc: 'Перетащите файлы на конвертер или вставьте URL с любой поддерживаемой платформы.',
+    step2_title: 'Выберите формат', step2_desc: 'Выберите целевой формат и настройте качество, разрешение или кодек.',
+    step3_title: 'Скачайте', step3_desc: 'Конвертированный файл готов моментально. Скачайте или поделитесь ссылкой.',
+    step4_title: 'Готово!', step4_desc: 'Никакой регистрации, никаких перенаправлений. Просто магия конвертации.',
+    faq_title: 'Частые вопросы',
+    faq1_q: 'TransFormX действительно бесплатный?', faq1_a: 'Да, полностью. Все основные функции бесплатны без ограничений по количеству файлов.',
+    faq2_q: 'Каков максимальный размер файла?', faq2_a: 'Бесплатные аккаунты — до 2 ГБ. Про-аккаунты — до 50 ГБ.',
+    faq3_q: 'Мои файлы остаются приватными?', faq3_a: 'Файлы зашифрованы и удаляются в течение 60 минут.',
+    faq4_q: 'Почему ссылка не работает?', faq4_a: 'Некоторые платформы часто меняют API. Мы регулярно обновляемся. Защищённый контент нельзя скачать.',
+    faq5_q: 'Можно конвертировать на телефоне?', faq5_a: 'Да! TransFormX полностью адаптивен и работает в браузерах iOS и Android.',
+    faq6_q: 'Есть ли у вас API?', faq6_a: 'Да. Наш REST API доступен для разработчиков с бесплатными и Про-ключами.',
+    cta_title: 'Начни конвертировать сегодня', cta_desc: 'Регистрация не нужна. Просто перетащи файл.',
+    footer_desc: 'Самый мощный конвертер и загрузчик файлов. Бесплатно навсегда.',
+    footer_tools: 'Инструменты', footer_company: 'Компания', footer_legal: 'Правовая информация',
+    footer_about: 'О нас', footer_blog: 'Блог', footer_api: 'Документация API', footer_status: 'Статус',
+    footer_privacy: 'Политика конфиденциальности', footer_terms: 'Условия использования', footer_cookies: 'Политика куки', footer_dmca: 'DMCA',
+    footer_rights: 'Все права защищены.',
+    toast_upload: 'Файлы готовы к конвертации!', toast_converting: 'Конвертируем ваши файлы...', toast_done: 'Конвертация завершена! Скачиваем...', toast_downloading: 'Подготовка загрузки...', toast_url_empty: 'Пожалуйста, введите URL.', toast_url_invalid: 'Пожалуйста, введите корректный URL.',
+  },
+  zh: {
+    nav_tools: '工具', nav_converter: '轉換器', nav_downloader: '下載器', nav_features: '功能', nav_faq: '常見問題',
+    hero_badge: 'v3.0 — 支援 300+ 種格式',
+    hero_title1: '轉換任何檔案。', hero_title2: '下載所有內容。',
+    hero_sub: '全球最強大的檔案轉換套件。轉換文件、媒體、圖片和音訊——並即時從 1000+ 個平台下載。',
+    hero_cta1: '開始轉換', hero_cta2: '下載連結',
+    stat1: '格式', stat2: '平台', stat3: '已處理檔案', stat4: '免費使用',
+    tools_title: '您需要的所有工具', tools_desc: '適用於每種檔案類型的專業級轉換器。無需安裝軟體。',
+    badge_hot: '熱門', badge_new: '新增', badge_free: '免費',
+    tool_pdf_title: 'PDF 轉換器', tool_pdf_desc: '轉換 PDF 格式。合併、分割、壓縮並保護您的 PDF 檔案。',
+    tool_office_title: 'Microsoft Office', tool_office_desc: '將 Word、Excel、PowerPoint 轉換為 PDF、HTML、ODF 等格式。',
+    tool_image_title: '圖片轉換器', tool_image_desc: '調整大小、壓縮並在所有主流格式之間即時轉換圖片。',
+    tool_video_title: '影片轉換器', tool_video_desc: '將影片轉換為 MP4、MKV、AVI、WebM。提取音訊、剪輯片段等。',
+    tool_audio_title: '音訊轉換器', tool_audio_desc: '轉換音訊檔案、更改比特率、移除元資料。支援所有音訊編解碼器。',
+    tool_dl_title: '連結下載器', tool_dl_desc: '從 YouTube、TikTok、Instagram、Twitter 及 1000+ 個平台下載。',
+    tool_ebook_title: '電子書轉換器', tool_ebook_desc: '在所有電子書格式之間轉換。EPUB 轉 Kindle、PDF 轉 EPUB 等。',
+    tool_archive_title: '壓縮工具', tool_archive_desc: '建立、解壓縮和轉換壓縮檔。ZIP、RAR、7Z 可選加密。',
+    btn_open: '開啟工具', btn_convert: '立即轉換', btn_download: '立即下載',
+    conv_title: '通用檔案轉換器', conv_desc: '拖放任何檔案，選擇輸出格式，幾秒內完成下載。',
+    tab_doc: '文件', tab_img: '圖片', tab_vid: '影片', tab_aud: '音訊',
+    drop_title: '將文件拖放到這裡', drop_title_img: '將圖片拖放到這裡', drop_title_vid: '將影片拖放到這裡', drop_title_aud: '將音訊檔案拖放到這裡',
+    drop_sub: '或點擊從您的裝置瀏覽',
+    quality_label: '輸出品質',
+    dl_title: '從任何平台下載', dl_desc: '貼上以下任一平台的連結，即時下載您的內容。',
+    dl_paste_label: '貼上您的連結', dl_placeholder: 'https://youtube.com/watch?v=...', dl_format_label: '選擇下載格式：',
+    platform_other: '1000+ 更多', platform_other_sub: '任何網址',
+    feat_title: '與眾不同', feat_desc: '每個細節都為速度、隱私和可靠性而設計。',
+    f1_title: '閃電般快速', f1_desc: '由遍佈 30 多個地區的伺服器驅動。大多數轉換在 10 秒內完成。',
+    f2_title: '私密且安全', f2_desc: '所有檔案在傳輸過程中加密，並在 1 小時內從伺服器永久刪除。',
+    f3_title: '永遠免費', f3_desc: '核心功能永久免費。沒有隱藏費用、強制註冊或浮水印。',
+    f4_title: '隨處可用', f4_desc: '適用於任何裝置——桌機、手機、平板。無需安裝軟體。',
+    f5_title: '批次處理', f5_desc: '一次轉換最多 50 個檔案。將所有結果下載為單一 ZIP 壓縮檔。',
+    f6_title: 'API 存取', f6_desc: '透過我們的 REST API 將轉換整合到您自己的應用程式中。',
+    how_title: '三步完成', how_desc: '無需學習曲線。無需帳號。只需結果。',
+    step1_title: '上傳或貼上', step1_desc: '將檔案拖放到轉換器，或貼上任何支援平台的網址。',
+    step2_title: '選擇輸出', step2_desc: '選擇目標格式並調整品質、解析度或編解碼器選項。',
+    step3_title: '下載', step3_desc: '轉換後的檔案立即準備好。下載它或分享連結。',
+    step4_title: '完成！', step4_desc: '無需註冊，無需電子郵件，無重新導向或彈出視窗。',
+    faq_title: '常見問題',
+    faq1_q: 'TransFormX 真的免費嗎？', faq1_a: '是的，完全免費。所有核心轉換和下載功能均免費，沒有檔案數量限制。',
+    faq2_q: '最大檔案大小是多少？', faq2_a: '免費帳號最多可轉換 2 GB 的檔案。Pro 帳號支援最多 50 GB 的檔案。',
+    faq3_q: '我的檔案保持私密嗎？', faq3_a: '檔案經過加密，在隔離的容器中處理，並在 60 分鐘內刪除。',
+    faq4_q: '為什麼我的下載連結不起作用？', faq4_a: '部分平台頻繁更改 API。我們定期更新。受保護/DRM 內容無法下載。',
+    faq5_q: '可以在手機上轉換檔案嗎？', faq5_a: '可以！TransFormX 完全響應式，適用於 iOS 和 Android 瀏覽器。',
+    faq6_q: '你們有 API 嗎？', faq6_a: '有。我們的 REST API 提供給開發者，有免費和 Pro 金鑰層級。',
+    cta_title: '立即開始轉換', cta_desc: '無需註冊。只需拖放您的檔案即可開始。',
+    footer_desc: '全球最強大的檔案轉換和下載套件。永久免費。',
+    footer_tools: '工具', footer_company: '公司', footer_legal: '法律',
+    footer_about: '關於', footer_blog: '部落格', footer_api: 'API 文件', footer_status: '狀態',
+    footer_privacy: '隱私政策', footer_terms: '使用條款', footer_cookies: 'Cookie 政策', footer_dmca: 'DMCA',
+    footer_rights: '版權所有。',
+    toast_upload: '檔案已準備好轉換！', toast_converting: '正在轉換您的檔案...', toast_done: '轉換完成！正在下載...', toast_downloading: '正在準備下載...', toast_url_empty: '請先輸入網址。', toast_url_invalid: '請輸入有效的網址。',
+  }
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  const flags = { en: '🇺🇸', ru: '🇷🇺', zh: '🇹🇼' };
+  const names = { en: 'EN', ru: 'RU', zh: '繁' };
+  document.getElementById('currentLangFlag').textContent = flags[lang];
+  document.getElementById('currentLangName').textContent = names[lang];
+
+  document.querySelectorAll('.lang-option').forEach((el, i) => {
+    el.classList.toggle('selected', ['en','ru','zh'][i] === lang);
+  });
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang][key]) el.textContent = i18n[lang][key];
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (i18n[lang][key]) el.placeholder = i18n[lang][key];
+  });
+
+  document.documentElement.lang = lang === 'zh' ? 'zh-TW' : lang;
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  nav.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONVERTER TABS
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.converter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.converter-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════
+const fileIcons = {
+  pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊', ppt: '📊', pptx: '📊',
+  jpg: '🖼️', jpeg: '🖼️', png: '🖼️', gif: '🌀', webp: '🖼️', svg: '✏️',
+  mp4: '🎬', mkv: '🎬', avi: '🎬', mov: '🎬', webm: '🎬',
+  mp3: '🎵', flac: '💿', wav: '🎵', aac: '🎵', ogg: '🎵',
+  zip: '🗜️', rar: '🗜️', '7z': '🗜️', epub: '📚', default: '📁'
+};
+
+function getFileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  return fileIcons[ext] || fileIcons.default;
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function handleFiles(input, type) {
+  const files = Array.from(input.files);
+  renderFileList(files, type);
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+  e.currentTarget.classList.remove('dragover');
+}
+
+function handleDrop(e, type) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files);
+  renderFileList(files, type);
+}
+
+function renderFileList(files, type) {
+  const list = document.getElementById('fileList' + type.charAt(0).toUpperCase() + type.slice(1));
+  const fmtRow = document.getElementById('fmtRow' + type.charAt(0).toUpperCase() + type.slice(1));
+  const btn = document.getElementById('btnConv' + type.charAt(0).toUpperCase() + type.slice(1));
+  const qualityRow = document.getElementById('qualityRow');
+
+  list.innerHTML = '';
+  files.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.style.animationDelay = (i * 0.05) + 's';
+    item.innerHTML = `
+      <div class="file-icon">${getFileIcon(f.name)}</div>
+      <div class="file-info">
+        <div class="file-name">${f.name}</div>
+        <div class="file-size">${formatFileSize(f.size)}</div>
+      </div>
+      <div class="file-remove" onclick="removeFile(this)">✕</div>
+    `;
+    list.appendChild(item);
+  });
+
+  if (files.length > 0) {
+    fmtRow.style.display = 'grid';
+    btn.style.display = 'flex';
+    if (type === 'img' && qualityRow) qualityRow.style.display = 'block';
+    showToast(i18n[currentLang].toast_upload, 'success');
+  }
+}
+
+function removeFile(btn) {
+  btn.closest('.file-item').remove();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONVERT
+// ═══════════════════════════════════════════════════════════
+function startConvert(type) {
+  const cap = type.charAt(0).toUpperCase() + type.slice(1);
+  const toSel = document.getElementById('to' + cap);
+  const prog = document.getElementById('prog' + cap);
+  const fill = document.getElementById('prog' + cap + 'Fill');
+  const btn = document.getElementById('btnConv' + cap);
+
+  if (!toSel.value) {
+    showToast('Please select an output format!', 'error');
+    toSel.style.borderColor = 'var(--accent2)';
+    setTimeout(() => toSel.style.borderColor = '', 2000);
+    return;
+  }
+
+  showToast(i18n[currentLang].toast_converting, 'info');
+  btn.classList.add('btn-loading');
+  btn.innerHTML = '<div class="spinner"></div> Processing...';
+  prog.style.display = 'block';
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 18 + 5;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      setTimeout(() => {
+        prog.style.display = 'none';
+        fill.style.width = '0%';
+        btn.classList.remove('btn-loading');
+        btn.innerHTML = `⚡ <span>${i18n[currentLang].btn_convert}</span>`;
+        showToast(i18n[currentLang].toast_done, 'success');
+      }, 600);
+    }
+    fill.style.width = Math.min(progress, 100) + '%';
+  }, 200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// DOWNLOADER
+// ═══════════════════════════════════════════════════════════
+function selectPlatform(name) {
+  document.getElementById('urlInput').placeholder = `Paste your ${name} link here...`;
+  document.getElementById('urlInput').focus();
+  scrollTo('downloader');
+  showToast(`${name} selected. Paste your link!`, 'info');
+}
+
+function selectDlFormat(el, format) {
+  document.querySelectorAll('#dlFormatChips .platform-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startDownload() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) { showToast(i18n[currentLang].toast_url_empty, 'error'); return; }
+
+  try { new URL(url); } catch(e) {
+    showToast(i18n[currentLang].toast_url_invalid, 'error');
+    return;
+  }
+
+  const prog = document.getElementById('progDl');
+  const fill = document.getElementById('progDlFill');
+
+  showToast(i18n[currentLang].toast_downloading, 'info');
+  prog.style.display = 'block';
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15 + 4;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      setTimeout(() => {
+        prog.style.display = 'none';
+        fill.style.width = '0%';
+        showToast(i18n[currentLang].toast_done, 'success');
+      }, 800);
+    }
+    fill.style.width = Math.min(progress, 100) + '%';
+  }, 250);
+}
+
+// ═══════════════════════════════════════════════════════════
+// QUALITY SELECTOR
+// ═══════════════════════════════════════════════════════════
+function selectQuality(el) {
+  document.querySelectorAll('.quality-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOOL MODAL
+// ═══════════════════════════════════════════════════════════
+const toolOptions = {
+  pdf: {
+    title: 'PDF Tools',
+    sub: 'Choose a PDF operation:',
+    options: [
+      { icon: '📄', label: 'PDF to Word' }, { icon: '📊', label: 'PDF to Excel' },
+      { icon: '📸', label: 'PDF to Image' }, { icon: '🔀', label: 'Merge PDFs' },
+      { icon: '✂️', label: 'Split PDF' }, { icon: '🗜️', label: 'Compress PDF' },
+      { icon: '🔒', label: 'Protect PDF' }, { icon: '🔓', label: 'Unlock PDF' },
+    ]
+  },
+  office: {
+    title: 'Office Tools',
+    sub: 'Choose an Office operation:',
+    options: [
+      { icon: '📝', label: 'Word to PDF' }, { icon: '📊', label: 'Excel to PDF' },
+      { icon: '📊', label: 'PPT to PDF' }, { icon: '📄', label: 'PDF to Word' },
+      { icon: '🌐', label: 'Word to HTML' }, { icon: '📖', label: 'Word to TXT' },
+      { icon: '📊', label: 'CSV to Excel' }, { icon: '🔄', label: 'ODF Convert' },
+    ]
+  },
+  image: {
+    title: 'Image Tools',
+    sub: 'Choose an image operation:',
+    options: [
+      { icon: '🔄', label: 'Convert Format' }, { icon: '📐', label: 'Resize Image' },
+      { icon: '🗜️', label: 'Compress' }, { icon: '✂️', label: 'Crop Image' },
+      { icon: '🎨', label: 'Remove BG' }, { icon: '📸', label: 'Convert to WEBP' },
+      { icon: '🌅', label: 'HEIC to JPG' }, { icon: '🖼️', label: 'Make Favicon' },
+    ]
+  },
+  video: {
+    title: 'Video Tools',
+    sub: 'Choose a video operation:',
+    options: [
+      { icon: '🎬', label: 'Convert Video' }, { icon: '🎵', label: 'Extract Audio' },
+      { icon: '✂️', label: 'Trim Video' }, { icon: '🗜️', label: 'Compress Video' },
+      { icon: '🌀', label: 'Video to GIF' }, { icon: '📸', label: 'Video Screenshot' },
+      { icon: '🔇', label: 'Remove Audio' }, { icon: '📐', label: 'Resize Video' },
+    ]
+  },
+  audio: {
+    title: 'Audio Tools',
+    sub: 'Choose an audio operation:',
+    options: [
+      { icon: '🔄', label: 'Convert Audio' }, { icon: '✂️', label: 'Trim Audio' },
+      { icon: '🗜️', label: 'Compress Audio' }, { icon: '🔊', label: 'Change Bitrate' },
+      { icon: '📝', label: 'Strip Metadata' }, { icon: '🔀', label: 'Merge Audio' },
+      { icon: '🎙️', label: 'Voice Isolate' }, { icon: '🔈', label: 'Volume Adjust' },
+    ]
+  },
+  ebook: {
+    title: 'eBook Tools',
+    sub: 'Choose an eBook operation:',
+    options: [
+      { icon: '📚', label: 'EPUB to MOBI' }, { icon: '📖', label: 'EPUB to PDF' },
+      { icon: '📱', label: 'EPUB to AZW3' }, { icon: '📄', label: 'PDF to EPUB' },
+      { icon: '📝', label: 'MOBI to EPUB' }, { icon: '🔖', label: 'FB2 to EPUB' },
+    ]
+  },
+  archive: {
+    title: 'Archive Tools',
+    sub: 'Choose an archive operation:',
+    options: [
+      { icon: '🗜️', label: 'Create ZIP' }, { icon: '📂', label: 'Extract ZIP' },
+      { icon: '🔒', label: 'Encrypt ZIP' }, { icon: '📦', label: 'RAR to ZIP' },
+      { icon: '🗜️', label: 'Create 7Z' }, { icon: '📂', label: 'Extract RAR' },
+    ]
+  }
+};
+
+function openTool(type) {
+  const data = toolOptions[type];
+  if (!data) return;
+  document.getElementById('modalTitle').textContent = data.title;
+  document.getElementById('modalSub').textContent = data.sub;
+  const grid = document.getElementById('modalGrid');
+  grid.innerHTML = data.options.map(o => `
+    <div class="modal-option" onclick="selectModalOption('${o.label}')">
+      <div class="modal-option-icon">${o.icon}</div>
+      <div class="modal-option-label">${o.label}</div>
+    </div>
+  `).join('');
+  document.getElementById('toolModal').classList.add('open');
+}
+
+function selectModalOption(label) {
+  closeModal();
+  scrollTo('converter');
+  showToast(`"${label}" selected — drop your file below!`, 'info');
+}
+
+function closeModal() {
+  document.getElementById('toolModal').classList.remove('open');
+}
+
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('toolModal')) closeModal();
+}
+
+// ═══════════════════════════════════════════════════════════
+// FAQ
+// ═══════════════════════════════════════════════════════════
+function toggleFaq(item) {
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<div class="toast-icon"></div><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = '0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════════════════════════
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ═══════════════════════════════════════════════════════════
+// NAV ACTIVE + SCROLL SHADOW
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  nav.style.boxShadow = window.scrollY > 10 ? '0 4px 24px rgba(0,0,0,0.2)' : '';
+});
+
+// ═══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ═══════════════════════════════════════════════════════════
+// PASTE URL SHORTCUT
+// ═══════════════════════════════════════════════════════════
+document.getElementById('urlInput').addEventListener('paste', (e) => {
+  setTimeout(() => {
+    const val = e.target.value.trim();
+    if (val.startsWith('http')) {
+      showToast('Link pasted! Select your format and download.', 'success');
+    }
+  }, 50);
+});
+
+// Init
+setLang('en');
+</script>
+</body>
+</html>
