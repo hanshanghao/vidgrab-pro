@@ -14,7 +14,7 @@
                 <i class="fas fa-download"></i>
                 <h1>VidGrab Pro</h1>
             </div>
-            <p class="tagline">Download videos from any platform in any quality</p>
+            <p class="tagline">Paste a video link &mdash; we'll route you to a downloader that fits</p>
             
             <nav class="primary-menu">
                 <ul class="menu">
@@ -30,7 +30,7 @@
         <div class="main-content">
             <div class="page-content">
                 <h1>How It Works</h1>
-                <p>Downloading videos with VidGrab Pro is simple and fast. Follow these four easy steps:</p>
+                <p>Finding a downloader for your video is simple and fast. Follow these four easy steps:</p>
                 
                 <div class="features-grid">
                     <div class="feature">
@@ -50,18 +50,18 @@
                     </div>
                     
                     <div class="feature">
-                        <i class="fas fa-sliders-h"></i>
+                        <i class="fas fa-magnifying-glass"></i>
                         <div class="feature-content">
-                            <h3>Step 3: Choose Quality</h3>
-                            <p>Select your preferred video quality from available options: 480p (SD), 720p (HD), 1080p (Full HD), 2K, or 4K when available.</p>
+                            <h3>Step 3: Platform Detection</h3>
+                            <p>VidGrab Pro detects which platform your link belongs to (YouTube, Instagram, TikTok, Facebook, Twitter/X and more).</p>
                         </div>
                     </div>
                     
                     <div class="feature">
-                        <i class="fas fa-download"></i>
+                        <i class="fas fa-arrow-up-right-from-square"></i>
                         <div class="feature-content">
-                            <h3>Step 4: Download</h3>
-                            <p>Click the download button and your video will start downloading immediately to your device. That's it!</p>
+                            <h3>Step 4: Get Rerouted</h3>
+                            <p>A matching third-party downloader website opens in a new tab with your link pre-filled. Follow that site's instructions to save the video. Available quality options depend on the service.</p>
                         </div>
                     </div>
                 </div>
@@ -74,16 +74,18 @@
                 
                 <div class="legal-notice">
                     <h3><i class="fas fa-info-circle"></i> Important Information</h3>
-                    <p>Our service supports over 150 platforms and constantly updates to ensure compatibility with the latest changes. If you encounter any issues, please check our FAQ or contact support.</p>
+                    <p>VidGrab Pro routes links for the platforms listed on our <a href="supported-sites.html">Supported Sites</a> page. It does not host or process videos itself - the third-party downloader that opens is responsible for the actual download. Downloading videos may violate some platforms' terms of service and may infringe copyright; only download content you have permission to use.</p>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>&copy; 2025 VidGrab Pro. All rights reserved.</p>
+            <p>&copy; <span id="year"></span> VidGrab Pro. All rights reserved.</p>
         </footer>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

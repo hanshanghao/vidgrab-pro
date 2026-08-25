@@ -14,7 +14,7 @@
                 <i class="fas fa-download"></i>
                 <h1>VidGrab Pro</h1>
             </div>
-            <p class="tagline">Download videos from any platform in any quality</p>
+            <p class="tagline">Paste a video link &mdash; we'll route you to a downloader that fits</p>
             
             <nav class="primary-menu">
                 <ul class="menu">
@@ -34,52 +34,52 @@
                 <div class="faq-list">
                     <div class="faq-item">
                         <div class="faq-question">Is VidGrab Pro free to use?</div>
-                        <div class="faq-answer">Yes, our basic video downloading service is completely free. We offer premium features for power users, but the core functionality remains free forever.</div>
+                        <div class="faq-answer">Yes, this website is completely free, with no accounts or subscriptions. Keep in mind that the third-party downloader sites it routes you to are supported by their own advertising.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">What video qualities are available?</div>
-                        <div class="faq-answer">We support multiple quality options including 480p (SD), 720p (HD), 1080p (Full HD), 2K, and 4K when available from the source platform.</div>
+                        <div class="faq-answer">VidGrab Pro does not process videos itself - the downloader service that opens in a new tab determines which qualities and formats are offered. Most services provide a range from SD up to Full HD when the source allows it.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Is it legal to download videos?</div>
-                        <div class="faq-answer">VidGrab Pro is a tool for personal use. Please respect copyright laws and only download videos that you have permission to use or that are in the public domain.</div>
+                        <div class="faq-answer">VidGrab Pro is intended for personal use. Please respect copyright laws and only download videos you own or have permission to use. Be aware that downloading may also violate the terms of service of some platforms.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Do you support mobile devices?</div>
-                        <div class="faq-answer">Yes, our website is fully responsive and works perfectly on all devices including smartphones, tablets, and desktop computers.</div>
+                        <div class="faq-answer">Yes, this website is fully responsive and works on smartphones, tablets, and desktop computers.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Why is my download not working?</div>
-                        <div class="faq-answer">This could be due to several reasons: unsupported platform, video privacy settings, or temporary server issues. Try again later or contact support.</div>
+                        <div class="faq-answer">The actual download happens on the third-party service that opens in a new tab. Those services change frequently and may have temporary issues, ads, or pop-ups. Try again, use a different browser, or report persistent problems via our contact page.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Can I download entire playlists?</div>
-                        <div class="faq-answer">Currently, we support individual video downloads. Playlist downloading is a feature we're developing for future updates.</div>
+                        <div class="faq-answer">No. VidGrab Pro works with individual video links only.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">How long does it take to download a video?</div>
-                        <div class="faq-answer">Download speed depends on your internet connection and video size. Most videos download in under a minute with a standard broadband connection.</div>
+                        <div class="faq-answer">That depends on the destination service, your internet connection, and the size of the video. VidGrab Pro itself adds no delay - it simply opens the right page for your link.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Do you store any of my data?</div>
-                        <div class="faq-answer">We respect your privacy. We don't store downloaded videos or personal information. Video URLs are processed in real-time and not saved.</div>
+                        <div class="faq-answer">This website stores nothing and has no backend database. However, note that when you submit a URL, it is passed along to the third-party downloader site that opens - their own privacy policy applies there.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">Do I need to create an account?</div>
-                        <div class="faq-answer">No account is required for basic downloads. However, creating a free account gives you access to download history and faster speeds.</div>
+                        <div class="faq-answer">No. There are no accounts on VidGrab Pro at all - just paste a link and go.</div>
                     </div>
                     
                     <div class="faq-item">
                         <div class="faq-question">What formats are supported?</div>
-                        <div class="faq-answer">We support MP4, WEBM, MKV, and AVI formats. MP4 is recommended for best compatibility.</div>
+                        <div class="faq-answer">Formats are determined by the destination downloader service. MP4 is the most commonly offered format across services.</div>
                     </div>
                 </div>
                 
@@ -92,10 +92,21 @@
         </div>
         
         <footer>
-            <p>&copy; 2025 VidGrab Pro. All rights reserved.</p>
+            <p>&copy; <span id="year"></span> VidGrab Pro. All rights reserved.</p>
         </footer>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.faq-item.active').forEach(other => {
+                    if (other !== item) other.classList.remove('active');
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

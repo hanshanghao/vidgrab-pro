@@ -14,7 +14,7 @@
                 <i class="fas fa-download"></i>
                 <h1>VidGrab Pro</h1>
             </div>
-            <p class="tagline">Download videos from any platform in any quality</p>
+            <p class="tagline">Paste a video link &mdash; we'll route you to a downloader that fits</p>
             
             <nav class="primary-menu">
                 <ul class="menu">
@@ -29,8 +29,8 @@
 
         <div class="main-content">
             <div class="page-content">
-                <h1>Supported Platforms & Sites</h1>
-                <p>VidGrab Pro supports video downloading from over 150+ platforms. Here are the most popular ones:</p>
+                <h1>Supported Platforms &amp; Sites</h1>
+                <p>VidGrab Pro routes video links from these platforms to suitable third-party downloader services:</p>
                 
                 <div class="platforms-grid">
                     <div class="platform">
@@ -106,17 +106,19 @@
                 </div>
                 
                 <div class="legal-notice">
-                    <h3><i class="fas fa-sync"></i> Constantly Updated</h3>
-                    <p>We continuously add support for new platforms and update existing ones to ensure compatibility. If you don't see your preferred platform listed, please contact us and we'll prioritize adding it.</p>
+                    <h3><i class="fas fa-circle-question"></i> Platform Missing?</h3>
+                    <p>Links from platforms not listed above are routed to a universal downloader service, which may or may not support them. If you'd like a platform prioritized, let us know via the <a href="contact.html">contact page</a>.</p>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>&copy; 2025 VidGrab Pro. All rights reserved.</p>
+            <p>&copy; <span id="year"></span> VidGrab Pro. All rights reserved.</p>
         </footer>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

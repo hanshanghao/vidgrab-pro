@@ -1,1 +1,0 @@
-npm install express ytdl-core cors
